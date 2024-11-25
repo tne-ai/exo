@@ -23,6 +23,6 @@ jobs:
       #       pip install -e .
       #       exo --prompt "hello"
       - run:
-          name: run
+          name: benchmark
           command: |
-            python3 $HOME/Library/com.circleci.runner/workdir/exo/.circleci/bench.py
+            python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
