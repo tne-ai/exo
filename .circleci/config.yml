@@ -7,6 +7,6 @@ workflows:
 jobs:
   runner:
     machine: true
-    resource_class: exo-explore/hardware  # {project name}/{identifier}
+    resource_class: exo/hardware  # {project name}/{identifier}
     steps:
       - run: echo "Hi I'm on Runners!"
