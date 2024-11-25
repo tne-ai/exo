@@ -26,4 +26,4 @@ jobs:
           name: run
           command: |
             . venv/bin/activate
-            python3 $HOME/exo/explore/.circleci/benchmark.py
+            python3 $HOME/exo/explore/.circleci/bench.py
