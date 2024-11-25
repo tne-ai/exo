@@ -6,7 +6,7 @@ workflows:
       - runner
 
 jobs:
-  runner-test:
+  runner:
     machine: true
     resource_class: exo/hardware
     steps:
