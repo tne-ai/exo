@@ -15,7 +15,7 @@ jobs:
 
       # Step 3: Install dependencies
       - run:
-          name: Install Python dependencies
+          name: init venv
           command: |
             python3 -m venv venv
             . venv/bin/activate
@@ -23,7 +23,7 @@ jobs:
 
       # Step 4: Run the Python script
       - run:
-          name: Run performance test
+          name: run
           command: |
             . venv/bin/activate
-            API_ENDPOINT="http://your-api-endpoint-here" python3 benchmark.py
+            python3 benchmark.py
