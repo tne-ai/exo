@@ -3,56 +3,113 @@ import asyncio
 import time
 import json
 import os
+from typing import Dict, Any
 
-async def measure_performance(api_endpoint: str, prompt: str = "Who are you?"):
-  async with aiohttp.ClientSession() as session:
-    request = {
-      "model": "llama-3.2-3b",
-      "messages": [{"role": "user", "content": prompt}],
-      "stream": True
+
+async def measure_performance(api_endpoint: str, prompt: str) -> Dict[str, Any]:
+    """
+    Measures the performance of an API endpoint by sending a prompt and recording metrics.
+
+    Args:
+        api_endpoint (str): The API endpoint URL.
+        prompt (str): The prompt to send to the API.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing performance metrics or error information.
+    """
+    results: Dict[str, Any] = {}
+    request_payload = {
+        "model": "llama-3.2-3b",
+        "messages": [{"role": "user", "content": prompt}],
+        "stream": True
     }
 
-    start_time = time.time()
-    first_token_time = None
-    total_tokens = 0
-
-    print(f"Sending request to {api_endpoint}...")
-
-    async with session.post(api_endpoint, json=request) as response:
-      async for line in response.content:
-        if not line.strip():
-          continue
-
-        line = line.decode('utf-8')
-        if line.startswith('data: '):
-          line = line[6:]  # Remove 'data: ' prefix
-        if line == '[DONE]':
-          break
-
+    async with aiohttp.ClientSession() as session:
         try:
-          chunk = json.loads(line)
-          if chunk.get('choices') and chunk['choices'][0].get('delta', {}).get('content'):
-            if first_token_time is None:
-              first_token_time = time.time()
-              ttft = first_token_time - start_time
-              print(f"Time to first token: {ttft:.3f}s")
+            start_time = time.time()
+            first_token_time = None
+            total_tokens = 0
 
-            total_tokens += 1
+            async with session.post(api_endpoint, json=request_payload) as response:
+                if response.status != 200:
+                    results["error"] = f"HTTP {response.status}: {response.reason}"
+                    return results
 
-        except json.JSONDecodeError:
-          continue
+                async for raw_line in response.content:
+                    line = raw_line.decode('utf-8').strip()
+                    if not line or not line.startswith('data: '):
+                        continue
 
-    end_time = time.time()
-    total_time = end_time - start_time
+                    line_content = line[6:]  # Remove 'data: ' prefix
+                    if line_content == '[DONE]':
+                        break
 
-    if total_tokens > 0:
-      tps = total_tokens / total_time
-      print(f"Tokens per second: {tps:.1f}")
-      print(f"Total tokens generated: {total_tokens}")
-      print(f"Total time: {total_time:.3f}s")
-    else:
-      print("No tokens were generated")
+                    try:
+                        chunk = json.loads(line_content)
+                        choice = chunk.get('choices', [{}])[0]
+                        content = choice.get('delta', {}).get('content')
+
+                        if content:
+                            if first_token_time is None:
+                                first_token_time = time.time()
+                                results["time_to_first_token"] = first_token_time - start_time
+
+                            total_tokens += 1
+                    except json.JSONDecodeError:
+                        # Log or handle malformed JSON if necessary
+                        continue
+
+            end_time = time.time()
+            total_time = end_time - start_time
+
+            if total_tokens > 0:
+                results.update({
+                    "tokens_per_second": total_tokens / total_time,
+                    "total_tokens": total_tokens,
+                    "total_time": total_time
+                })
+            else:
+                results["error"] = "No tokens were generated"
+
+        except aiohttp.ClientError as e:
+            results["error"] = f"Client error: {e}"
+        except Exception as e:
+            results["error"] = f"Unexpected error: {e}"
+
+    return results
+
+
+async def main() -> None:
+    api_endpoint = "http://localhost:52415/v1/chat/completions"
+
+    # Define prompts
+    prompt_basic = "hello"
+    prompt_essay = "write an essay about life, the universe, and everything."
+
+    # Measure performance for the basic prompt
+    print("Measuring performance for the basic prompt...")
+    results_basic = await measure_performance(api_endpoint, prompt_basic)
+    print("Basic prompt performance metrics:")
+    print(json.dumps(results_basic, indent=4))
+
+    # Measure performance for the essay prompt, which depends on the first measurement
+    print("\nMeasuring performance for the essay prompt...")
+    results = await measure_performance(api_endpoint, prompt_essay)
+
+    # Save metrics from the "universe and everything" prompt
+    metrics_file = os.path.join("artifacts", "benchmark.json")
+    os.makedirs(os.path.dirname(metrics_file), exist_ok=True)
+    try:
+        with open(metrics_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=4)
+        print(f"Performance metrics saved to {metrics_file}")
+    except IOError as e:
+        print(f"Failed to save metrics: {e}")
+
+    # Optionally print the metrics for visibility
+    print("Performance metrics:")
+    print(json.dumps(results, indent=4))
+
 
 if __name__ == "__main__":
-  asyncio.run(measure_performance("http://localhost:52415/v1/chat/completions", prompt="hello"))
-  asyncio.run(measure_performance("http://localhost:52415/v1/chat/completions", prompt="Write an essay about life, the universe, and everything."))
+    asyncio.run(main())

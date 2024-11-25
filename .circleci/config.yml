@@ -18,3 +18,6 @@ jobs:
             . venv/bin/activate
             pip install aiohttp
             python3 $HOME/Library/Preferences/com.circleci.runner/workdir/.circleci/bench.py
+      - store_artifacts:
+          path: artifacts/benchmark.json
+          destination: benchmark.json
