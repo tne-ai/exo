@@ -25,4 +25,5 @@ jobs:
       - run:
           name: benchmark
           command: |
-            python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
+            ls -all $HOME/Library/com.circleci.runner/workdir/
+            # python3 $HOME/Library/com.circleci.runner/workdir/
