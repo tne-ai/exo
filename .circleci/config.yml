@@ -17,6 +17,12 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install aiohttp
+      - run:
+          name: Debug Working Directory
+          command: |
+            echo "Working Directory: $(pwd)"
+            ls -all $(pwd)
+
       # - run:
       #     name: ping
       #     command: |
