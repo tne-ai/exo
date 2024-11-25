@@ -1,12 +1,11 @@
 version: 2.1
-
 workflows:
-  build-workflow:
+  testing:
     jobs:
-      - runner
+      - runner-test
 jobs:
-  runner:
+  runner-test:
     machine: true
-    resource_class: exo/hardware  # {project name}/{identifier}
+    resource_class: exo/hardware
     steps:
       - run: echo "Hi I'm on Runners!"
