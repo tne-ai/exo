@@ -1,11 +1,29 @@
 version: 2.1
+
 workflows:
   testing:
     jobs:
-      - runner-test
+      - runner
+
 jobs:
   runner-test:
     machine: true
     resource_class: exo/hardware
     steps:
-      - run: echo "Hi I'm on Runners!"
+      # Step 1: Check out the repository
+      - checkout
+
+      # Step 3: Install dependencies
+      - run:
+          name: Install Python dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install aiohttp
+
+      # Step 4: Run the Python script
+      - run:
+          name: Run performance test
+          command: |
+            . venv/bin/activate
+            API_ENDPOINT="http://your-api-endpoint-here" python3 benchmark.py

@@ -54,5 +54,4 @@ async def measure_performance(api_endpoint: str, prompt: str = "Who are you?"):
       print("No tokens were generated")
 
 if __name__ == "__main__":
-  API_ENDPOINT = os.getenv("API_ENDPOINT", "http://localhost:52415/v1/chat/completions")
-  asyncio.run(measure_performance(API_ENDPOINT, prompt="Write an essay about life, the universe, and everything."))
+  asyncio.run(measure_performance("http://localhost:52415/v1/chat/completions", prompt="Write an essay about life, the universe, and everything."))
