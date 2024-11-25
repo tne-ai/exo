@@ -14,7 +14,6 @@ jobs:
       - run:
           name: init
           command: |
-            pip install --upgrade pip
             sh install.sh
       - run:
           name: ping
