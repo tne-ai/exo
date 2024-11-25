@@ -21,7 +21,7 @@ jobs:
           name: ping
           command: |
             . venv/bin/activate
-            install.sh
+            sh install.sh
             exo --prompt "hello"
       - run:
           name: run
