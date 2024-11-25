@@ -17,14 +17,12 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install aiohttp
-      - run:
-          name: ping
-          command: |
-            . venv/bin/activate
-            sh install.sh
-            exo --prompt "hello"
+      # - run:
+      #     name: ping
+      #     command: |
+      #       pip install -e .
+      #       exo --prompt "hello"
       - run:
           name: run
           command: |
-            . venv/bin/activate
-            python3 $HOME/exo/explore/.circleci/bench.py
+            python3 $HOME/Library/exo/.circleci/bench.py
