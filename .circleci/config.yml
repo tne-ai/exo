@@ -14,5 +14,7 @@ jobs:
       - run:
           name: benchmark
           command: |
-            sh install.sh
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install aiohttp
             python3 $HOME/Library/Preferences/com.circleci.runner/workdir/.circleci/bench.py
