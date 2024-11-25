@@ -12,14 +12,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: init
+          name: benchmark
           command: |
-            sh install.sh
-      - run:
-          name: ping
-          command: |
-            exo --prompt "hello"
-      # - run:
-      #     name: benchmark
-      #     command: |
-      #       python3 $HOME/Library/Preferences/com.circleci.runner/workdir/.circleci/bench.py
+            python3 $HOME/Library/Preferences/com.circleci.runner/workdir/.circleci/bench.py
