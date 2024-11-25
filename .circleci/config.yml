@@ -25,4 +25,4 @@ jobs:
       - run:
           name: run
           command: |
-            python3 $HOME/Library/exo/.circleci/bench.py
+            python3 $HOME/Library/com.circleci.runner/workdir/exo/.circleci/bench.py
