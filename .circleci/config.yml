@@ -10,20 +10,18 @@ jobs:
     machine: true
     resource_class: exo/hardware
     steps:
-      # Step 1: Check out the repository
       - checkout
-
-      # Step 3: Install dependencies
       - run:
-          name: init venv
+          name: init
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install aiohttp
-
-      # Step 4: Run the Python script
+      - run:
+          name: ping
+          command: |
+            exo --prompt "hello"
       - run:
           name: run
           command: |
-            . venv/bin/activate
             python3 $HOME/exo/explore/.circleci/bench.py
