@@ -86,11 +86,11 @@ async def main() -> None:
     prompt_basic = "hello"
     prompt_essay = "write an essay about life, the universe, and everything."
 
-    # Measure performance for the basic prompt
-    print("Measuring performance for the basic prompt...")
-    results_basic = await measure_performance(api_endpoint, prompt_basic)
-    print("Basic prompt performance metrics:")
-    print(json.dumps(results_basic, indent=4))
+    # # Measure performance for the basic prompt
+    # print("Measuring performance for the basic prompt...")
+    # results_basic = await measure_performance(api_endpoint, prompt_basic)
+    # print("Basic prompt performance metrics:")
+    # print(json.dumps(results_basic, indent=4))
 
     # Measure performance for the essay prompt, which depends on the first measurement
     print("\nMeasuring performance for the essay prompt...")
