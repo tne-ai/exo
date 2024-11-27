@@ -21,7 +21,7 @@ async def measure_performance(api_endpoint: str, prompt: str) -> Dict[str, Any]:
     request_payload = {
         "model": "llama-3.2-3b",
         "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0,
+        "temperature": 2,
         "stream": True
     }
 
