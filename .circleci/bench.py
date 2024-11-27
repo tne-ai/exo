@@ -21,6 +21,7 @@ async def measure_performance(api_endpoint: str, prompt: str) -> Dict[str, Any]:
     request_payload = {
         "model": "llama-3.2-3b",
         "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
         "stream": True
     }
 
@@ -83,8 +84,8 @@ async def main() -> None:
     api_endpoint = "http://localhost:52415/v1/chat/completions"
 
     # Define prompts
-    prompt_basic = "hello"
-    prompt_essay = "write an essay about life, the universe, and everything."
+    prompt_basic = "this is a ping"
+    prompt_essay = "write an essay about cats"
 
     # Measure performance for the basic prompt
     print("Measuring performance for the basic prompt...")
