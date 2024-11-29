@@ -8,8 +8,8 @@ jobs:
     machine: true
     resource_class: "exo/hardware"
     steps:
-      - checkout
-        timeout: 1m
+      - checkout:
+          timeout: 1m
       # - run:
       #     name: Print Machine Details
       #     command: |
