@@ -13,16 +13,18 @@ jobs:
             
             # Get hostname and IP address
             echo "Hostname: $(hostname)" > /tmp/system-info/system-details.txt
-            echo "IP Addresses:" >> /tmp/system-info/system-details.txt
-            ip addr | grep "inet " | awk '{print $2}' >> /tmp/system-info/system-details.txt
+            echo -e "\nIP Addresses:" >> /tmp/system-info/system-details.txt
+            ifconfig | grep "inet " | awk '{print $2}' >> /tmp/system-info/system-details.txt
             
             # Get CPU information
             echo -e "\nCPU Information:" >> /tmp/system-info/system-details.txt
-            lscpu | grep "Model name\|Architecture" >> /tmp/system-info/system-details.txt
+            sysctl -n machdep.cpu.brand_string >> /tmp/system-info/system-details.txt
+            echo "CPU Cores: $(sysctl -n hw.ncpu)" >> /tmp/system-info/system-details.txt
+            echo "Architecture: $(uname -m)" >> /tmp/system-info/system-details.txt
             
             # Get memory information
             echo -e "\nMemory Information:" >> /tmp/system-info/system-details.txt
-            free -h >> /tmp/system-info/system-details.txt
+            echo "Total Memory (GB): $(( $(sysctl -n hw.memsize) / 1024 / 1024 / 1024 ))" >> /tmp/system-info/system-details.txt
             
             # Add timestamp
             echo -e "\nTimestamp: $(date)" >> /tmp/system-info/system-details.txt
