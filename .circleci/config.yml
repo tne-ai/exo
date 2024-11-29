@@ -1,11 +1,5 @@
 version: 2.1
 
-parameters:
-  target_chips:
-    type: string
-    default: "M1,M2"
-    description: "Comma-separated chip types"
-
 jobs:
   check_chip:
     parameters:
@@ -15,18 +9,14 @@ jobs:
     resource_class: << parameters.runner_name >>
     steps:
       - run:
-          name: Get and compare chip info
+          name: Debug chip info
           command: |
-            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
+            echo "Full CPU info:"
+            sysctl -n machdep.cpu.brand_string
             
-            if echo "<< pipeline.parameters.target_chips >>" | tr ',' '\n' | grep -q "$CHIP"; then
-              echo "Found matching chip: $CHIP"
-              echo "Hello $CHIP"
-              exit 0
-            else
-              echo "Chip $CHIP not in target list"
-              exit 1
-            fi
+            echo "Extracted chip:"
+            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
+            echo $CHIP
 
 workflows:
   check-chips:
