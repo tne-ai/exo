@@ -8,6 +8,9 @@ jobs:
     machine: true
     resource_class: "exo/hardware"
     steps:
+      - run:
+          name: Stagger Start
+          command: sleep $((RANDOM % 10))
       - checkout
       # - run:
       #     name: Print Machine Details
@@ -32,8 +35,7 @@ jobs:
 workflows:
   check-chips:
     jobs:
-      - check_chip
-      # - check_chip:
-          # matrix:
-          #   parameters:
-          #     target_chip: ["M3", "M4"]
+      - check_chip:
+          matrix:
+            parameters:
+              target_chip: ["M3", "M4"]
