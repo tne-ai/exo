@@ -1,39 +1,42 @@
 version: 2.1
 
+parameters:
+  target_chips:
+    type: string
+    default: "M1,M2"
+    description: "comma-separated chip types"
+
 jobs:
-  runner-test:
-    machine: true
-    resource_class: exo/hardware
+  check_chip:
+    parameters:
+      runner_name:
+        type: string
+    machine:
+      image: exo/hardware
+      name: << parameters.runner_name >>
     steps:
       - run:
-          name: Gather System Information
+          name: Get and compare chip info
           command: |
-            # Create directory for artifacts
-            mkdir -p /tmp/system-info
+            # Get chip info
+            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
             
-            # Get hostname and IP address
-            echo "Hostname: $(hostname)" > /tmp/system-info/system-details.txt
-            echo -e "\nIP Addresses:" >> /tmp/system-info/system-details.txt
-            ifconfig | grep "inet " | awk '{print $2}' >> /tmp/system-info/system-details.txt
-            
-            # Get CPU information
-            echo -e "\nCPU Information:" >> /tmp/system-info/system-details.txt
-            sysctl -n machdep.cpu.brand_string >> /tmp/system-info/system-details.txt
-            echo "CPU Cores: $(sysctl -n hw.ncpu)" >> /tmp/system-info/system-details.txt
-            echo "Architecture: $(uname -m)" >> /tmp/system-info/system-details.txt
-            
-            # Get memory information
-            echo -e "\nMemory Information:" >> /tmp/system-info/system-details.txt
-            echo "Total Memory (GB): $(( $(sysctl -n hw.memsize) / 1024 / 1024 / 1024 ))" >> /tmp/system-info/system-details.txt
-            
-            # Add timestamp
-            echo -e "\nTimestamp: $(date)" >> /tmp/system-info/system-details.txt
-
-      - store_artifacts:
-          path: /tmp/system-info
-          destination: system-info
+            # Check if chip matches target
+            if echo "<< pipeline.parameters.target_chips >>" | tr ',' '\n' | grep -q "$CHIP"; then
+              echo "Found matching chip: $CHIP"
+              echo "Hello $CHIP"
+              exit 0
+            else
+              echo "Chip $CHIP not in target list"
+              exit 1
+            fi
 
 workflows:
-  testing:
+  check-chips:
     jobs:
-      - runner-test
+      - check_chip:
+          name: check-e0
+          runner_name: hardware-runner-e0
+          matrix:
+            parameters:
+              runner_name: ["hardware-runner-e0", "hardware-runner-e1"]
