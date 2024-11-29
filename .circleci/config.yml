@@ -9,25 +9,25 @@ jobs:
     resource_class: "exo/hardware"
     steps:
       - checkout
-      - run:
-          name: Print Machine Details
-          command: |
-            echo "=== Machine Details ==="
-            echo "Hostname: $(hostname)"
-            echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
-            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
-            echo "Chip: $CHIP"
-            echo "===================="
+      # - run:
+      #     name: Print Machine Details
+      #     command: |
+      #       echo "=== Machine Details ==="
+      #       echo "Hostname: $(hostname)"
+      #       echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
+      #       CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
+      #       echo "Chip: $CHIP"
+      #       echo "===================="
             
-            if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
-              echo "Found $CHIP chip on $(hostname)"
-              chmod +x install.sh
-              ./install.sh
-              exo
-            else
-              echo "No << parameters.target_chip >> chip found on this machine"
-              exit 1
-            fi
+      #       if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
+      #         echo "Found $CHIP chip on $(hostname)"
+      #         chmod +x install.sh
+      #         ./install.sh
+      #         exo
+      #       else
+      #         echo "No << parameters.target_chip >> chip found on this machine"
+      #         exit 1
+      #       fi
 
 workflows:
   check-chips:
