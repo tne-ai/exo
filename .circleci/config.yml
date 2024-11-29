@@ -19,6 +19,7 @@ jobs:
             echo "Checking GitHub HTTP connection..."
             curl -I https://github.com
       - checkout
+      # Uncomment and customize below if needed
       # - run:
       #     name: Print Machine Details
       #     command: |
@@ -43,6 +44,10 @@ workflows:
   check-chips:
     jobs:
       - check_chip:
-          matrix:
-            parameters:
-              target_chip: ["M3", "M4"]
+          name: Check Chip M3
+          parameters:
+            target_chip: "M3"
+      - check_chip:
+          name: Check Chip M4
+          parameters:
+            target_chip: "M4"
