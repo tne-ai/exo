@@ -1,9 +1,9 @@
 version: 2.1
-#
+
 workflows:
-  testing:
+  benchmark:
     jobs:
-      - runner
+      - hardware-runner-e0
 
 jobs:
   runner:
@@ -12,12 +12,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: benchmark
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install aiohttp
-            python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
-      - store_artifacts:
-          path: artifacts/benchmark.json
-          destination: benchmark.json
+        echo "hello world"
+      # - run:
+      #     name: benchmark
+      #     command: |
+      #       python3 -m venv venv
+      #       . venv/bin/activate
+      #       pip install aiohttp
+      #       python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
+      # - store_artifacts:
+      #     path: artifacts/benchmark.json
+      #     destination: benchmark.json
