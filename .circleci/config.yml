@@ -11,6 +11,9 @@ jobs:
       - run:
           name: Debug chip info
           command: |
+            echo "Hostname:"
+            hostname
+            
             echo "Full CPU info:"
             sysctl -n machdep.cpu.brand_string
             
@@ -24,4 +27,4 @@ workflows:
       - check_chip:
           matrix:
             parameters:
-              runner_name: ["exo/hardware", "exo/hardware"]
+              runner_name: ["hardware-runner-e0", "hardware-runner-e1"]
