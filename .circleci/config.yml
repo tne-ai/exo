@@ -42,35 +42,58 @@
 #             target_chip: "M4"
 
 
+# version: 2.1
+
+# jobs:
+#   check_chips:
+#     machine: true
+#     resource_class: "exo/hardware"
+#     steps:
+#       - checkout
+#       - run:
+#           name: Check M3 and M4 Chips
+#           command: |
+#             CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
+#             echo "=== Machine Details ==="
+#             echo "Hostname: $(hostname)"
+#             echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
+#             echo "Chip: $CHIP"
+#             echo "===================="
+            
+#             if [[ "$CHIP" == "M3" || "$CHIP" == "M4" ]]; then
+#               echo "Found $CHIP chip on $(hostname)"
+#               chmod +x install.sh
+#               ./install.sh
+#               exo
+#             else
+#               echo "No M3 or M4 chip found on this machine"
+#               exit 1
+#             fi
+
+# workflows:
+#   check-chips:
+#     jobs:
+#       - check_chips
+
+
+
 version: 2.1
 
+workflows:
+  benchmark:
+    jobs:
+      - hardware-runner-e0
+
 jobs:
-  check_chips:
+  runner:
     machine: true
-    resource_class: "exo/hardware"
+    resource_class: exo/hardware
     steps:
       - checkout
       - run:
-          name: Check M3 and M4 Chips
+          name: benchmark
           command: |
-            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
-            echo "=== Machine Details ==="
-            echo "Hostname: $(hostname)"
-            echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
-            echo "Chip: $CHIP"
-            echo "===================="
-            
-            if [[ "$CHIP" == "M3" || "$CHIP" == "M4" ]]; then
-              echo "Found $CHIP chip on $(hostname)"
-              chmod +x install.sh
-              ./install.sh
-              exo
-            else
-              echo "No M3 or M4 chip found on this machine"
-              exit 1
-            fi
-
-workflows:
-  check-chips:
-    jobs:
-      - check_chips
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install aiohttp
+            python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
