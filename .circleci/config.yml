@@ -11,13 +11,13 @@ jobs:
     resource_class: exo/hardware
     steps:
       - checkout
-      # - run:
-      #     name: benchmark
-      #     command: |
-      #       python3 -m venv venv
-      #       . venv/bin/activate
-      #       pip install aiohttp
-      #       python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
+      - run:
+          name: benchmark
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install aiohttp
+            python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
       # - store_artifacts:
       #     path: artifacts/benchmark.json
       #     destination: benchmark.json
