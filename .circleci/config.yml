@@ -1,25 +1,30 @@
 version: 2.1
 
+parameters:
+  target_chip:
+    type: string
+    default: "M4"
+    description: "Target chip to find"
+
 jobs:
   check_chip:
-    parameters:
-      runner_name:
-        type: string
     machine: true
-    resource_class: << parameters.runner_name >>
+    resource_class: "exo/hardware"
     steps:
       - run:
-          name: Debug chip info
+          name: Check for chip
           command: |
-            echo "Hostname:"
-            hostname
-            
-            echo "Full CPU info:"
-            sysctl -n machdep.cpu.brand_string
-            
-            echo "Extracted chip:"
+            echo "Hostname: $(hostname)"
             CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
-            echo $CHIP
+            echo "Found chip: $CHIP"
+            
+            if [[ "$CHIP" == "<< pipeline.parameters.target_chip >>" ]]; then
+              echo "Match found! Hello $CHIP"
+              exit 0
+            else
+              echo "This machine doesn't have << pipeline.parameters.target_chip >>"
+              exit 1
+            fi
 
 workflows:
   check-chips:
@@ -27,4 +32,4 @@ workflows:
       - check_chip:
           matrix:
             parameters:
-              runner_name: ["hardware-runner-e0", "hardware-runner-e1"]
+              target_chip: ["M1", "M2"]
