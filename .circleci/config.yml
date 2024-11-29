@@ -1,11 +1,37 @@
 version: 2.1
-workflows:
-  testing:
-    jobs:
-      - runner-test
+
 jobs:
   runner-test:
     machine: true
     resource_class: exo/hardware
     steps:
-      - run: echo "Hi I'm on Runners!"
+      - run:
+          name: Gather System Information
+          command: |
+            # Create directory for artifacts
+            mkdir -p /tmp/system-info
+            
+            # Get hostname and IP address
+            echo "Hostname: $(hostname)" > /tmp/system-info/system-details.txt
+            echo "IP Addresses:" >> /tmp/system-info/system-details.txt
+            ip addr | grep "inet " | awk '{print $2}' >> /tmp/system-info/system-details.txt
+            
+            # Get CPU information
+            echo -e "\nCPU Information:" >> /tmp/system-info/system-details.txt
+            lscpu | grep "Model name\|Architecture" >> /tmp/system-info/system-details.txt
+            
+            # Get memory information
+            echo -e "\nMemory Information:" >> /tmp/system-info/system-details.txt
+            free -h >> /tmp/system-info/system-details.txt
+            
+            # Add timestamp
+            echo -e "\nTimestamp: $(date)" >> /tmp/system-info/system-details.txt
+
+      - store_artifacts:
+          path: /tmp/system-info
+          destination: system-info
+
+workflows:
+  testing:
+    jobs:
+      - runner-test
