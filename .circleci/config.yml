@@ -82,7 +82,7 @@ version: 2.1
 workflows:
   benchmark:
     jobs:
-      - benchmark
+      - runner # Changed from benchmark to runner
 
 jobs:
   runner:
@@ -94,6 +94,6 @@ jobs:
           name: benchmark
           command: |
             python3 -m venv venv
-            . venv/bin/activate
+            . venv/activate
             pip install aiohttp
             python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
