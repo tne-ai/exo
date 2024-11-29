@@ -82,7 +82,7 @@ version: 2.1
 workflows:
   benchmark:
     jobs:
-      - hardware-runner-e0
+      - benchmark
 
 jobs:
   runner:
