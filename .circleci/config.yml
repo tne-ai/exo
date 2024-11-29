@@ -11,6 +11,13 @@ jobs:
       - run:
           name: Stagger Start
           command: sleep $((RANDOM % 10))
+      - run:
+          name: Verify Network Connectivity
+          command: |
+            echo "Pinging GitHub..."
+            ping -c 3 github.com
+            echo "Checking GitHub HTTP connection..."
+            curl -I https://github.com
       - checkout
       # - run:
       #     name: Print Machine Details
