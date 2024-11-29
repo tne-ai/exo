@@ -8,8 +8,7 @@ jobs:
     machine: true
     resource_class: "exo/hardware"
     steps:
-      - checkout:
-          timeout: 1m
+      - checkout
       # - run:
       #     name: Print Machine Details
       #     command: |
@@ -33,7 +32,8 @@ jobs:
 workflows:
   check-chips:
     jobs:
-      - check_chip:
-          matrix:
-            parameters:
-              target_chip: ["M3", "M4"]
+      - check_chip
+      # - check_chip:
+          # matrix:
+          #   parameters:
+          #     target_chip: ["M3", "M4"]
