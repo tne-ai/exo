@@ -11,8 +11,6 @@ jobs:
     resource_class: exo/hardware
     steps:
       - checkout
-      - run:
-        echo "hello world"
       # - run:
       #     name: benchmark
       #     command: |
