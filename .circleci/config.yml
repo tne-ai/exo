@@ -1,15 +1,9 @@
 version: 2.1
 
-parameters:
-  target_chip:
-    type: string
-    default: "M1"
-    description: "Target chip to find"
-
 jobs:
   check_chip:
     parameters:
-      instance:
+      target_chip:
         type: string
     machine: true
     resource_class: "exo/hardware"
@@ -21,11 +15,11 @@ jobs:
             CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
             echo "Found chip: $CHIP"
             
-            if [[ "$CHIP" == "<< pipeline.parameters.target_chip >>" ]]; then
+            if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
               echo "Match found! Hello $CHIP"
               exit 0
             else
-              echo "This machine doesn't have << pipeline.parameters.target_chip >>"
+              echo "This machine doesn't have << parameters.target_chip >>"
               exit 1
             fi
 
@@ -35,4 +29,4 @@ workflows:
       - check_chip:
           matrix:
             parameters:
-              instance: ["1", "2"]
+              target_chip: ["M3", "M4"]
