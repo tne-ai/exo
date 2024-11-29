@@ -30,7 +30,7 @@ jobs:
     machine: true
     resource_class: exo/hardware  # Replace with your actual namespace/resource-class
     steps:
-      - checkout
+      # - checkout
       - run:
           name: Hello from macOS Runner
           command: |
