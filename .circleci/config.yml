@@ -3,11 +3,14 @@ version: 2.1
 parameters:
   target_chip:
     type: string
-    default: "M4"
+    default: "M1"
     description: "Target chip to find"
 
 jobs:
   check_chip:
+    parameters:
+      instance:
+        type: string
     machine: true
     resource_class: "exo/hardware"
     steps:
@@ -32,4 +35,4 @@ workflows:
       - check_chip:
           matrix:
             parameters:
-              target_chip: ["M1", "M2"]
+              instance: ["1", "2"]
