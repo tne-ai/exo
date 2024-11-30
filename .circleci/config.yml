@@ -79,21 +79,22 @@
 
 version: 2.1
 
-workflows:
-  benchmark:
-    jobs:
-      - runner # Changed from benchmark to runner
+executors:
+  self-hosted:
+    machine:
+      resource_class: exo/hardware
 
 jobs:
   runner:
-    machine: true
-    resource_class: exo/hardware
+    executor: self-hosted
     steps:
       - checkout
       - run:
-          name: benchmark
+          name: Hello World Benchmark
           command: |
-            python3 -m venv venv
-            . venv/activate
-            pip install aiohttp
-            python3 $HOME/Library/com.circleci.runner/workdir/.circleci/bench.py
+            echo "Hello, World!"
+
+workflows:
+  benchmark:
+    jobs:
+      - runner
