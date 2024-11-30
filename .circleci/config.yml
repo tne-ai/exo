@@ -39,14 +39,11 @@ workflows:
   check-chips:
     jobs:
       - check_chip:
-          name: Check Chip M1
-          parameters:
-            target_chip: "M1"
+          name: "Check Chip M1"
+          target_chip: "M1"
       - check_chip:
-          name: Check Chip M2
-          parameters:
-            target_chip: "M2"
+          name: "Check Chip M2"
+          target_chip: "M2"
       - check_chip:
-          name: Check Chip M4
-          parameters:
-            target_chip: "M4"
+          name: "Check Chip M4"
+          target_chip: "M4"
