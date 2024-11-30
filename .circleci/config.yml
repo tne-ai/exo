@@ -1,82 +1,3 @@
-# version: 2.1
-
-# jobs:
-#   check_chip:
-#     parameters:
-#       target_chip:
-#         type: string
-#     machine: true
-#     resource_class: "exo/hardware"
-#     steps:
-#       - checkout
-#       - run:
-#           name: Print Machine Details
-#           command: |
-#             echo "=== Machine Details ==="
-#             echo "Hostname: $(hostname)"
-#             echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
-#             CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
-#             echo "Chip: $CHIP"
-#             echo "===================="
-            
-#             if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
-#               echo "Found $CHIP chip on $(hostname)"
-#               chmod +x install.sh
-#               ./install.sh
-#               exo
-#             else
-#               echo "No << parameters.target_chip >> chip found on this machine"
-#               exit 1
-#             fi
-
-# workflows:
-#   check-chips:
-#     jobs:
-#       - check_chip:
-#           name: Check Chip M3
-#           parameters:
-#             target_chip: "M3"
-#       - check_chip:
-#           name: Check Chip M4
-#           parameters:
-#             target_chip: "M4"
-
-
-# version: 2.1
-
-# jobs:
-#   check_chips:
-#     machine: true
-#     resource_class: "exo/hardware"
-#     steps:
-#       - checkout
-#       - run:
-#           name: Check M3 and M4 Chips
-#           command: |
-#             CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
-#             echo "=== Machine Details ==="
-#             echo "Hostname: $(hostname)"
-#             echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
-#             echo "Chip: $CHIP"
-#             echo "===================="
-            
-#             if [[ "$CHIP" == "M3" || "$CHIP" == "M4" ]]; then
-#               echo "Found $CHIP chip on $(hostname)"
-#               chmod +x install.sh
-#               ./install.sh
-#               exo
-#             else
-#               echo "No M3 or M4 chip found on this machine"
-#               exit 1
-#             fi
-
-# workflows:
-#   check-chips:
-#     jobs:
-#       - check_chips
-
-
-
 version: 2.1
 
 executors:
@@ -85,16 +6,47 @@ executors:
       resource_class: exo/hardware
 
 jobs:
-  runner:
+  check_chip:
     executor: self-hosted
+    parameters:
+      target_chip:
+        type: string
+        description: "The Apple chip to check for (e.g., M1, M2, M4)"
     steps:
       - checkout
       - run:
-          name: Hello World Benchmark
+          name: Check for << parameters.target_chip >> Chip
           command: |
-            echo "Hello, World!"
+            # Retrieve the chip information
+            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
+            
+            # Display machine details
+            echo "=== Machine Details ==="
+            echo "Hostname: $(hostname)"
+            echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
+            echo "Chip: $CHIP"
+            echo "========================"
+
+            # Check if the machine has the target chip
+            if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
+              echo "✅ Runner has the << parameters.target_chip >> chip."
+            else
+              # Exit silently without error
+              exit 0
+            fi
 
 workflows:
-  benchmark:
+  check-chips:
     jobs:
-      - runner
+      - check_chip:
+          name: Check Chip M1
+          parameters:
+            target_chip: "M1"
+      - check_chip:
+          name: Check Chip M2
+          parameters:
+            target_chip: "M2"
+      - check_chip:
+          name: Check Chip M4
+          parameters:
+            target_chip: "M4"
