@@ -1,5 +1,38 @@
 version: 2.1
 
+commands:
+  checkout_with_retry:
+    description: "Custom command to checkout with retry logic"
+    steps:
+      - run:
+          name: Checkout with retry
+          command: |
+            MAX_RETRIES=3
+            RETRY_COUNT=0
+            
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              if circleci-agent step halt; then
+                echo "Running checkout attempt $((RETRY_COUNT + 1)) of $MAX_RETRIES"
+                if checkout; then
+                  echo "✅ Checkout successful!"
+                  exit 0
+                else
+                  echo "❌ Checkout failed"
+                  RETRY_COUNT=$((RETRY_COUNT + 1))
+                  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                    echo "Waiting 10 seconds before retry..."
+                    sleep 10
+                  fi
+                fi
+              else
+                echo "Failed to halt previous step"
+                exit 1
+              fi
+            done
+            
+            echo "Failed to checkout after $MAX_RETRIES attempts"
+            exit 1
+
 executors:
   self-hosted:
     machine:
@@ -13,7 +46,7 @@ jobs:
         type: string
         description: "The Apple chip to check for (e.g., M1, M2, M4)"
     steps:
-      - checkout
+      - checkout_with_retry
       - run:
           name: Check for << parameters.target_chip >> Chip
           command: |
