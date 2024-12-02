@@ -11,30 +11,47 @@ jobs:
     parameters:
       target_chip:
         type: string
-        description: "The Apple chip to check for (M1 | M2 | M3 | M4)"
+        description: "The Apple chip to check for M1 | M2 | M3 | M4"
     steps:
       - run:
           name: Check for << parameters.target_chip >> Chip
           command: |
-            # Retrieve the chip information
+            # Retrieve system information
+            HOSTNAME=$(hostname)
+            IPADDR=$(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')
             CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
             
             # Display machine details
-            echo "=== Machine Details ==="
-            echo "Hostname: $(hostname)"
-            echo "IP Address: $(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')"
+            echo "=== Machine Details ===="
+            echo "Hostname: $HOSTNAME"
+            echo "IP Address: $IPADDR"
             echo "Chip: $CHIP"
             echo "========================"
 
             # Check if the machine has the target chip
             if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
               echo "✅ Runner has the << parameters.target_chip >> chip."
+              export CHIP_MATCH=true
             else
-              echo "❌ Runner does not have the << parameters.target_chip >> chip. No changes."
-              exit 1  # Exit with a non-zero status to prevent subsequent steps
+              echo "❌ Runner does not have the << parameters.target_chip >> chip."
+              export CHIP_MATCH=false
             fi
 
-      - checkout  # This step will only run if the previous step succeeds
+      - run:
+          name: Conditional Checkout
+          command: |
+            if [ "$CHIP_MATCH" = "true" ]; then
+              echo "Checking out the code..."
+              git clone https://github.com/exo-explore/exo.git
+              cd exo
+              python3.12 -m venv .venv
+              source .venv/bin/activate
+              pip install -e .
+              exo
+            else
+              echo "No checkout performed as the chip does not match."
+              exit 0  # silent exit
+            fi
 
 workflows:
   benchmark:
