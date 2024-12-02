@@ -16,6 +16,8 @@ jobs:
       - run:
           name: Check Chip and Perform Actions
           command: |
+            set -x  # Enable debug mode to trace commands
+
             # Retrieve system information
             HOSTNAME=$(hostname)
             IPADDR=$(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')
@@ -35,12 +37,13 @@ jobs:
               # Perform the checkout and subsequent actions
               echo "🔄 Performing checkout and setup..."
               git clone https://github.com/exo-explore/exo.git
-              cd exo
+              cd exo || { echo "❌ Failed to enter exo directory"; exit 1; }
               python3.12 -m venv .venv
               source .venv/bin/activate
               pip install -e .
               echo "🚀 Executing exo..."
               exo
+              echo "✅ Exo executed successfully."
             else
               echo "❌ Runner does not have the << parameters.target_chip >> chip. No changes."
             fi
@@ -48,15 +51,15 @@ jobs:
 workflows:
   benchmark:
     jobs:
-      - check_chip:
-          name: "Check Chip M1"
-          target_chip: "M1"
+      # - check_chip:
+      #     name: "Check Chip M1"
+      #     target_chip: "M1"
       - check_chip:
           name: "Check Chip M2"
           target_chip: "M2"
-      - check_chip:
-          name: "Check Chip M3"
-          target_chip: "M3"
-      - check_chip:
-          name: "Check Chip M4"
-          target_chip: "M4"
+      # - check_chip:
+      #     name: "Check Chip M3"
+      #     target_chip: "M3"
+      # - check_chip:
+      #     name: "Check Chip M4"
+      #     target_chip: "M4"
