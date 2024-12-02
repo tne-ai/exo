@@ -11,9 +11,8 @@ jobs:
     parameters:
       target_chip:
         type: string
-        description: "The Apple chip to check for (e.g., M1, M2, M3)"
+        description: "The Apple chip to check for (M1 | M2 | M3 | M4)"
     steps:
-      - checkout
       - run:
           name: Check for << parameters.target_chip >> Chip
           command: |
@@ -31,9 +30,11 @@ jobs:
             if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
               echo "✅ Runner has the << parameters.target_chip >> chip."
             else
-              # Exit silently without error
-              exit 0
+              echo "❌ Runner does not have the << parameters.target_chip >> chip. No changes."
+              exit 1  # Exit with a non-zero status to prevent subsequent steps
             fi
+
+      - checkout  # This step will only run if the previous step succeeds
 
 workflows:
   benchmark:
@@ -44,6 +45,9 @@ workflows:
       - check_chip:
           name: "Check Chip M2"
           target_chip: "M2"
+      - check_chip:
+          name: "Check Chip M3"
+          target_chip: "M3"
       - check_chip:
           name: "Check Chip M4"
           target_chip: "M4"
