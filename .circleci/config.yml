@@ -1,22 +1,19 @@
 version: 2.1
 
-executors:
-  hardware-array:
-    machine:
-      resource_class: exo/hardware
-
 jobs:
   check_chip:
-    executor: hardware-array
+    machine: true
+    resource_class: exo/hardware
     parameters:
       target_chip:
         type: string
         description: "The Apple chip to check for (M1 | M2 | M3 | M4)"
     steps:
+      - checkout
       - run:
           name: Check Chip and Perform Actions
           command: |
-            set -x  # Enable debug mode to trace commands
+            set -x  # Enable debug mode
 
             # Retrieve system information
             HOSTNAME=$(hostname)
@@ -34,13 +31,9 @@ jobs:
             if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
               echo "✅ Runner has the << parameters.target_chip >> chip."
               
-              # Perform the checkout and subsequent actions
-              echo "🔄 Performing checkout and setup..."
-              git clone https://github.com/exo-explore/exo.git
-              cd exo || { echo "❌ Failed to enter exo directory"; exit 1; }
-              python3.12 -m venv .venv
-              source .venv/bin/activate
-              pip install -e .
+              # Perform environment setup and execute exo
+              echo "🔄 Performing environment setup..."
+              sh install.sh
               echo "🚀 Executing exo..."
               exo
               echo "✅ Exo executed successfully."
