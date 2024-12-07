@@ -18,4 +18,4 @@ jobs:
             source venv/bin/activate
             pip install -U pip
             pip install -e .
-            exo --prompt "hello world"
+            exo run llama-3.2-3b --prompt "hello world"
