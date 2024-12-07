@@ -1,5 +1,4 @@
 version: 2.1
-
 workflows:
   testing:
     jobs:
@@ -9,4 +8,4 @@ jobs:
     machine: true
     resource_class: exo/hardware-runner-j4r75p27fq
     steps:
-      - run: echo "Hi I'm on Runners!" 
+      - run: echo "Hi I'm on Runners!"
