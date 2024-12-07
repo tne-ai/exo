@@ -11,8 +11,8 @@ jobs:
         description: "The Apple chip to check for (M1 | M2 | M3)"
     machine:
       resource_class: exo/hardware
-      tags:
-        - << parameters.tag >>
+    tags:
+      - << parameters.tag >>
     steps:
       - checkout
       - run:
