@@ -12,10 +12,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: benchmark
           command: |
-            python312 -m venv venv
+            python3.12 -m venv venv
             source venv/bin/activate
             pip install -U pip
             pip install -e .
-      - run: echo "Hi I'm on Runners!"
