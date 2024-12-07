@@ -19,7 +19,14 @@ jobs:
             pip install -U pip
             pip install -e .
             exo run llama-3.2-3b --prompt "hello"
-            python .circleci/bench.py
+      - run:
+          name: run benchmark
+          command |
+            /opt/homebrew/bin/python3.12 -m venv venv
+            source venv/bin/activate
+            pip install -U pip
+            pip install aiohttp
+            python3 .circleci/bench.py
       - store_artifacts:
           path: artifacts/benchmark.json
           destination: benchmark.json
