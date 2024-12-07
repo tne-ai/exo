@@ -18,9 +18,16 @@ jobs:
             source venv/bin/activate
             pip install -U pip
             pip install -e .
-            exo run llama-3.2-3b --prompt "hello" &
-            sleep 30
+            # Start exo as a background process and redirect output to a log file
+            exo run llama-3.2-3b --prompt "hello" > exo.log 2>&1 &
+            EXO_PID=$!
+            echo "Started exo with PID $EXO_PID"
+            # Wait for exo to initialize
+            sleep 10
+            # Run the benchmark
             python3 .circleci/bench.py
+            # Stop exo after the benchmark completes
+            kill $EXO_PID
       - store_artifacts:
           path: artifacts/benchmark.json
           destination: benchmark.json
