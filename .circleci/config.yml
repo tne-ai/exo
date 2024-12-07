@@ -1,62 +1,12 @@
 version: 2.1
 
-jobs:
-  check_chip:
-    parameters:
-      tag:
-        type: string
-        description: "Runner tag (macos1, macos2, macos3)"
-      target_chip:
-        type: string
-        description: "The Apple chip to check for (M1 | M2 | M3)"
-    machine:
-      resource_class: exo/hardware
-    tags:
-      - << parameters.tag >>
-    steps:
-      - checkout
-      - run:
-          name: Check Chip and Perform Actions
-          command: |
-            set -x  # Enable debug mode
-
-            # Retrieve system information
-            HOSTNAME=$(hostname)
-            IPADDR=$(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}')
-            CHIP=$(sysctl -n machdep.cpu.brand_string | grep -o "M[1-4]" || echo "Unknown")
-            
-            # Display machine details
-            echo "=== Machine Details ===="
-            echo "Hostname: $HOSTNAME"
-            echo "IP Address: $IPADDR"
-            echo "Chip: $CHIP"
-            echo "========================"
-
-            # Check if the machine has the target chip
-            if [[ "$CHIP" == "<< parameters.target_chip >>" ]]; then
-              echo "✅ Runner has the << parameters.target_chip >> chip."
-              
-              # Perform environment setup and execute exo
-              echo "🔄 Performing environment setup..."
-              sh install.sh
-              echo "🚀 Executing exo..."
-              exo 
-              echo "✅ Exo executed successfully."
-            else
-              echo "❌ Runner does not have the << parameters.target_chip >> chip. No changes."
-
 workflows:
-  benchmark:
+  testing:
     jobs:
-      - check_chip:
-          name: "Check Chip M1 on macos1"
-          tag: "macos1"
-          target_chip: "M1"
-      - check_chip:
-          name: "Check Chip M2 on macos2"
-          tag: "macos2"
-          target_chip: "M2"
-      - check_chip:
-          name: "Check Chip M3 on macos3"
-          tag: "macos3"
-          target_chip: "M3"
+      - runner-test
+jobs:
+  runner-test:
+    machine: true
+    resource_class: exo/hardware-runner-j4r75p27fq
+    steps:
+      - run: echo "Hi I'm on Runners!"
