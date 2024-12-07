@@ -2,12 +2,17 @@ version: 2.1
 
 jobs:
   check_chip:
-    machine: true
-    resource_class: exo/hardware
     parameters:
+      tag:
+        type: string
+        description: "Runner tag (macos1, macos2, macos3, macos4)"
       target_chip:
         type: string
         description: "The Apple chip to check for (M1 | M2 | M3 | M4)"
+    machine: true
+    resource_class: exo/hardware
+    tags:
+      - << parameters.tag >>
     steps:
       - checkout
       - run:
@@ -35,24 +40,27 @@ jobs:
               echo "🔄 Performing environment setup..."
               sh install.sh
               echo "🚀 Executing exo..."
-              exo
+              exo 
               echo "✅ Exo executed successfully."
             else
               echo "❌ Runner does not have the << parameters.target_chip >> chip. No changes."
-            fi
-
+              
 workflows:
   benchmark:
     jobs:
-      # - check_chip:
-      #     name: "Check Chip M1"
-      #     target_chip: "M1"
+      - check_chip:
+          name: "Check Chip M1"
+          tag: "hardware-runner-macbook.local"
+          target_chip: "M1"
       - check_chip:
           name: "Check Chip M2"
+          tag: "macos2"
           target_chip: "M2"
-      # - check_chip:
-      #     name: "Check Chip M3"
-      #     target_chip: "M3"
-      # - check_chip:
-      #     name: "Check Chip M4"
-      #     target_chip: "M4"
+      - check_chip:
+          name: "Check Chip M3"
+          tag: "macos3"
+          target_chip: "M3"
+      - check_chip:
+          name: "Check Chip M4"
+          tag: "macos4"
+          target_chip: "M4"
