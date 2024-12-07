@@ -5,10 +5,10 @@ jobs:
     parameters:
       tag:
         type: string
-        description: "Runner tag (macos1, macos2, macos3, macos4)"
+        description: "Runner tag (macos1, macos2, macos3)"
       target_chip:
         type: string
-        description: "The Apple chip to check for (M1 | M2 | M3 | M4)"
+        description: "The Apple chip to check for (M1 | M2 | M3)"
     machine:
       resource_class: exo/hardware
       tags:
@@ -44,23 +44,19 @@ jobs:
               echo "✅ Exo executed successfully."
             else
               echo "❌ Runner does not have the << parameters.target_chip >> chip. No changes."
-              
+
 workflows:
   benchmark:
     jobs:
       - check_chip:
-          name: "Check Chip M1"
-          tag: "macbook.local"
+          name: "Check Chip M1 on macos1"
+          tag: "macos1"
           target_chip: "M1"
       - check_chip:
-          name: "Check Chip M2"
+          name: "Check Chip M2 on macos2"
           tag: "macos2"
           target_chip: "M2"
       - check_chip:
-          name: "Check Chip M3"
+          name: "Check Chip M3 on macos3"
           tag: "macos3"
           target_chip: "M3"
-      - check_chip:
-          name: "Check Chip M4"
-          tag: "macos4"
-          target_chip: "M4"
