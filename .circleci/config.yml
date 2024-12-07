@@ -1,11 +1,21 @@
 version: 2.1
+
 workflows:
   testing:
     jobs:
-      - runner-test
+      - benchmark-test
+
 jobs:
-  runner-test:
+  benchmark:
     machine: true
     resource_class: exo/hardware-runner-j4r75p27fq
     steps:
+      - checkout
+      - run:
+          name: Create Python3.12 venv and install dependencies
+          command: |
+            python3.12 -m venv venv
+            source venv/bin/activate
+            pip install -U pip
+            pip install -e .
       - run: echo "Hi I'm on Runners!"
