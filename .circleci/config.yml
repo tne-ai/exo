@@ -18,4 +18,4 @@ jobs:
             source venv/bin/activate
             pip install -U pip
             pip install -e .
-            exo
+            exo --prompt "hello world"
