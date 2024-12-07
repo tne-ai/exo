@@ -12,9 +12,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create Python3.12 venv and install dependencies
+          name: benchmark
           command: |
-            python3.12 -m venv venv
+            python312 -m venv venv
             source venv/bin/activate
             pip install -U pip
             pip install -e .
