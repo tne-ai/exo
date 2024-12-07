@@ -12,13 +12,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: build exo
+          name: build & run exo
           command: |
             /opt/homebrew/bin/python3.12 -m venv venv
             source venv/bin/activate
             pip install -U pip
             pip install -e .
-      - run:
-          name: run exo
-          command: |
             exo
