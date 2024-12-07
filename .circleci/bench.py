@@ -84,7 +84,7 @@ async def main() -> None:
     api_endpoint = "http://localhost:52415/v1/chat/completions"
 
     # Define prompts
-    prompt_basic = "this is a ping"
+    prompt_basic = "hello"
     prompt_essay = "write an essay about cats"
 
     # Measure performance for the basic prompt
