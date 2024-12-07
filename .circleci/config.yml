@@ -19,7 +19,7 @@ jobs:
             pip install -U pip
             pip install -e .
             exo run llama-3.2-3b --prompt "hello"
-            python3.12 .circleci/benchmark.py
+            python3.12 .circleci/bench.py
       - store_artifacts:
           path: artifacts/benchmark.json
           destination: benchmark.json
