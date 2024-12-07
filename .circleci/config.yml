@@ -9,10 +9,10 @@ jobs:
       target_chip:
         type: string
         description: "The Apple chip to check for (M1 | M2 | M3 | M4)"
-    machine: true
-    resource_class: exo/hardware
-    tags:
-      - << parameters.tag >>
+    machine:
+      resource_class: exo/hardware
+      tags:
+        - << parameters.tag >>
     steps:
       - checkout
       - run:
@@ -50,7 +50,7 @@ workflows:
     jobs:
       - check_chip:
           name: "Check Chip M1"
-          tag: "hardware-runner-macbook.local"
+          tag: "macbook.local"
           target_chip: "M1"
       - check_chip:
           name: "Check Chip M2"
