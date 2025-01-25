@@ -268,7 +268,6 @@ document.addEventListener("alpine:init", () => {
               // Assume non-binary data (text) comes first
               const chunk = decoder.decode(value, { stream: true });
               const parsed = JSON.parse(chunk);
-              console.log(parsed)
   
               if (parsed.progress) {
                 if (!gottenFirstChunk) {

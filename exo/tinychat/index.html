@@ -387,7 +387,6 @@
     rows="1"
     x-autosize=""
     x-effect="
-        console.log(generating);
         if (!generating) $nextTick(() => {
             $el.focus();
             setTimeout(() => $refs.messages.scrollTo({ top: $refs.messages.scrollHeight, behavior: 'smooth' }), 100);
@@ -411,13 +410,11 @@
    */
   function transformMessageContent(message) {
     let text = message.content;
-    console.log('Processing message content:', text);
 
     // First replace think blocks
     text = text.replace(
       /<think>([\s\S]*?)(?:<\/think>|$)/g,
       (match, body) => {
-        console.log('Found think block with content:', body);
         const isComplete = match.includes('</think>');
         const spinnerClass = isComplete ? '' : ' thinking';
         const parsedBody = DOMPurify.sanitize(marked.parse(body));
