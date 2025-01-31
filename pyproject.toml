@@ -1,0 +1,7 @@
+[project]
+name = "exo"
+version = "0.1.0"
+description = "exo distributed ML"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
