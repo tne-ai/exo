@@ -1,0 +1,4 @@
+python 3.12.7
+direnv 2.35.0
+uv 0.6.2
+pipx 1.7.1
