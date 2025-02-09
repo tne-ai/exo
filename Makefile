@@ -18,6 +18,7 @@ run:
 ## uv: installation with uv, asdf and direnv
 .PHONY: uv
 uv:
+	uv pip install -e .
 	uv run exo
 
 .DEFAULT_GOAL := help
