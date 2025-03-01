@@ -1,14 +1,17 @@
 SHELL := /usr/bin/env bash
 
-## uv: installation with uv, asdf and direnv
-.PHONY: uv
-uv:
-	uv pip install -e .
-	uv run exo
-
-## install: pip install to system python
+## install: installation with uv, asdf and direnv with swap for install to setup.py
+# pyproject.toml does not handle dependency chekcing for mlx, and other gpu
+# things
 .PHONY: install
 install:
+	[[ -r pyproject.toml ]] && mv pyproject.toml pyproject.toml.bak
+	uv pip install -e .
+	[[ -r pyproject.toml.bak ]] && mv pyproject.toml.bak pyproject.toml
+
+## naked: pip install to system python into naked environment
+.PHONY: naked
+naked:
 	pip install -e .
 
 ## venv: create a venv and install there
@@ -16,9 +19,9 @@ install:
 venv:
 	install.sh
 
-## run: run exo in background
-.PHONY: run
-run:
+## exo: run exo in background
+.PHONY: exo
+exo:
 	exo
 
 .DEFAULT_GOAL := help
